@@ -7,7 +7,7 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class OrderCardTest {
     @Test
-    public void PositiveTest() {
+    public void positiveTest() {
         String expectedAttrValue = "order-success";
         open("http://localhost:9999/");
         $x("//*[@name='name']").setValue("Исаак Ньютон");
@@ -22,7 +22,7 @@ public class OrderCardTest {
     }
 
     @Test
-    public void NegativeTestNames() {
+    public void incorrectNamesTest() {
         String expectedErrorText = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
         open("http://localhost:9999/");
         $x("//*[@name='name']").setValue("No Name");
@@ -38,7 +38,7 @@ public class OrderCardTest {
     }
 
     @Test
-    public void NegativeTestPhone() {
+    public void incorrectPhoneTest() {
         String expectedErrorText = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
         open("http://localhost:9999/");
         $x("//*[@name='name']").setValue("Владимир Ленин");
@@ -55,7 +55,7 @@ public class OrderCardTest {
     }
 
     @Test
-    public void NegativeTestCheckbox() {
+    public void notEnabledCheckboxTest() {
         String expectedErrorText = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
         open("http://localhost:9999/");
         $x("//*[@name='name']").setValue("Владимир Ленин");
