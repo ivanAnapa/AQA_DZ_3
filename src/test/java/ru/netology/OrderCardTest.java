@@ -39,7 +39,7 @@ public class OrderCardTest {
 
     @Test
     public void incorrectPhoneTest() {
-        String expectedErrorText = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678. ";
+        String expectedErrorText = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
         open("http://localhost:9999/");
         $x("//*[@name='name']").setValue("Владимир Ленин");
         $x("//*[@name='phone']").setValue("@");
