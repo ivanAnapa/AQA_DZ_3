@@ -1,69 +1,109 @@
 package ru.netology;
 
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.Selenide.*;
 
 public class OrderCardTest {
+    private final String fullName = "Исаак Ньютон-Первый";
+    private final String phoneNum = "+70001112223";
+
+    @BeforeEach
+    void startBrowser() {
+        open("http://localhost:9999/");
+    }
+
     @Test
     public void positiveTest() {
-        String expectedAttrValue = "order-success";
-        open("http://localhost:9999/");
-        $x("//*[@name='name']").setValue("Исаак Ньютон");
-        $x("//*[@name='phone']").setValue("+12345678901");
-        $x("//*[@class='checkbox__box']").click();
-        $x("//*[@type='button']").click();
-        String actualAttrValue = $x("//*[@data-test-id]").getAttribute("data-test-id");
+        String expectedText = "  Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
 
-        Assertions.assertEquals(expectedAttrValue, actualAttrValue);
+        fillName(fullName);
+        fillPhone(phoneNum);
+        enableCheckbox();
+        clickSendBtn();
 
-        System.out.println("Test 1 - Ok");
+        String actualText = $("[data-test-id=order-success]").getText();
+        assertEquals(expectedText, actualText);
     }
 
     @Test
     public void incorrectNamesTest() {
         String expectedErrorText = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
-        open("http://localhost:9999/");
-        $x("//*[@name='name']").setValue("No Name");
-        $x("//*[@name='phone']").setValue("+12345678901");
-        $x("//*[@class='checkbox__box']").click();
-        $x("//*[@type='button']").click();
 
-        String actualErrorText = $x("(//*[@class='input__sub'])[1]").getText();
+        fillName("No Name");
+        fillPhone(phoneNum);
+        enableCheckbox();
+        clickSendBtn();
 
-        Assertions.assertEquals(expectedErrorText, actualErrorText);
+        String actualErrorText = $("[data-test-id='name'].input_invalid .input__sub").getText();
+        assertEquals(expectedErrorText, actualErrorText);
+    }
 
-        System.out.println("Test 2 - Ok");
+    @Test
+    public void emptyNamesTest() {
+        String expectedErrorText = "Поле обязательно для заполнения";
+
+        fillName("");
+        fillPhone(phoneNum);
+        enableCheckbox();
+        clickSendBtn();
+
+        String actualErrorText = $("[data-test-id='name'].input_invalid .input__sub").getText();
+        assertEquals(expectedErrorText, actualErrorText);
     }
 
     @Test
     public void incorrectPhoneTest() {
         String expectedErrorText = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
-        open("http://localhost:9999/");
-        $x("//*[@name='name']").setValue("Владимир Ленин");
-        $x("//*[@name='phone']").setValue("@");
-        $x("//*[@class='checkbox__box']").click();
-        $x("//*[@type='button']").click();
 
-        String actualErrorText =
-                $x("//span[./span[text()='Мобильный телефон']]//span[@class='input__sub']").getText();
+        fillName(fullName);
+        fillPhone("@");
+        enableCheckbox();
+        clickSendBtn();
 
-        Assertions.assertEquals(expectedErrorText, actualErrorText);
+        String actualErrorText = $("[data-test-id='phone'].input_invalid .input__sub").getText();
+        assertEquals(expectedErrorText, actualErrorText);
+    }
 
-        System.out.println("Test 3 - Ok");
+    @Test
+    public void emptyPhoneTest() {
+        String expectedErrorText = "Поле обязательно для заполнения";
+
+        fillName(fullName);
+        fillPhone("");
+        enableCheckbox();
+        clickSendBtn();
+
+        String actualErrorText = $("[data-test-id='phone'].input_invalid .input__sub").getText();
+        assertEquals(expectedErrorText, actualErrorText);
     }
 
     @Test
     public void notEnabledCheckboxTest() {
-        String expectedErrorText = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
-        open("http://localhost:9999/");
-        $x("//*[@name='name']").setValue("Владимир Ленин");
-        $x("//*[@name='phone']").setValue("@");
-        $x("//*[@type='button']").click();
-        $x("//*[@class='checkbox__text']/ancestor::label[contains(@class,'input_invalid')]").isDisplayed();
+        fillName(fullName);
+        fillPhone(phoneNum);
+        clickSendBtn();
 
-        System.out.println("Test 4 - Ok");
+        assertTrue($("[data-test-id='agreement'].input_invalid").isDisplayed());
+    }
+
+    private void fillName(String name) {
+        $x("//*[@name='name']").setValue(name);
+    }
+
+    private void fillPhone(String phone) {
+        $x("//*[@name='phone']").setValue(phone);
+    }
+
+    private void enableCheckbox() {
+        $x("//*[@class='checkbox__box']").click();
+    }
+
+    private void clickSendBtn() {
+        $x("//button[@type='button']").click();
     }
 
 }
