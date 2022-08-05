@@ -70,7 +70,7 @@ public class OrderCardTest {
 
     @Test
     public void emptyPhoneTest() {
-        String expectedErrorText = "Поле обязательно для заполнения";
+        String expectedErrorText = "Поле обязательно для заполнени я";
 
         fillName(fullName);
         fillPhone("");
